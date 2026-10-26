@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Quiz</title>
+
+    <style>
+       
+
+        .correct {
+            background: lightgreen;
+        }
+
+        .wrong {
+            background: lightcoral;
+        }
+
+        #next {
+            background: blue;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz">
+    <h2>JavaScript Quiz</h2>
+
+    <p id="progress"></p>
+    <p id="score">Score: 0</p>
+
+    <h3 id="question"></h3>
+
+    <div id="options"></div>
+
+    <p id="explanation"></p>
+
+    <button id="next" onclick="nextQuestion()" disabled>
+        Next Question
+    </button>
+</div>
+
+<script>
+    const questions = [
+        {
+            question: "Which keyword declares a variable?",
+            options: ["let", "print", "echo", "show"],
+            answer: 0,
+            explanation: "let is used to declare a variable."
+        },
+        {
+            question: "Which function prints output in the console?",
+            options: ["print()", "console.log()", "echo()", "display()"],
+            answer: 1,
+            explanation: "console.log() prints messages in the console."
+        },
+        {
+            question: "Which symbol checks strict equality?",
+            options: ["=", "==", "===", "!="],
+            answer: 2,
+            explanation: "=== compares values without type conversion."
+        },
+        {
+            question: "Which keyword declares a constant?",
+            options: ["var", "let", "const", "fixed"],
+            answer: 2,
+            explanation: "const declares a variable that cannot be reassigned."
+        },
+        {
+            question: "What is 2 + '3' in JavaScript?",
+            options: ["5", "23", "6", "Error"],
+            answer: 1,
+            explanation: "JavaScript joins the number and string to produce '23'."
+        }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let answered = false;
+
+    function showQuestion() {
+        answered = false;
+
+        document.getElementById("progress").innerText =
+            "Question " + (current + 1) + "/" + questions.length;
+
+        document.getElementById("score").innerText =
+            "Score: " + score;
+
+        document.getElementById("question").innerText =
+            questions[current].question;
+
+        document.getElementById("explanation").innerText = "";
+
+        document.getElementById("next").disabled = true;
+
+        let html = "";
+
+        questions[current].options.forEach(function(option, index) {
+            html += `<button onclick="checkAnswer(${index})">${option}</button>`;
+        });
+
+        document.getElementById("options").innerHTML = html;
+    }
+
+    function checkAnswer(selected) {
+        if (answered) return;
+
+        answered = true;
+
+        let q = questions[current];
+        let buttons = document.querySelectorAll("#options button");
+
+        if (selected === q.answer) {
+            score++;
+            buttons[selected].classList.add("correct");
+        } else {
+            buttons[selected].classList.add("wrong");
+            buttons[q.answer].classList.add("correct");
+        }
+
+        buttons.forEach(function(button) {
+            button.disabled = true;
+        });
+
+        document.getElementById("score").innerText =
+            "Score: " + score;
+
+        document.getElementById("explanation").innerText =
+            q.explanation;
+
+        document.getElementById("next").disabled = false;
+    }
+
+    function nextQuestion() {
+        current++;
+
+        if (current < questions.length) {
+            showQuestion();
+        } else {
+            let percentage = Math.round(score / questions.length * 100);
+
+            let rating;
+
+            if (percentage >= 80) {
+                rating = "Excellent!";
+            } else if (percentage >= 60) {
+                rating = "Good job!";
+            } else {
+                rating = "Keep practising!";
+            }
+
+            document.querySelector(".quiz").innerHTML = `
+                <h2>Quiz Completed!</h2>
+                <h3>Final Score: ${score}/${questions.length}</h3>
+                <h3>Percentage: ${percentage}%</h3>
+                <h3>${rating}</h3>
+                <button onclick="location.reload()">Try Again</button>
+            `;
+        }
+    }
+
+    showQuestion();
+</script>
+
+</body>
+</html>
+```
