@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #eef2ff;
+        }
+
+        .game {
+            width: min(90%, 420px);
+            padding: 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+        }
+
+        input,
+        button {
+            font: inherit;
+            padding: 0.65rem 0.8rem;
+        }
+
+        input {
+            width: 7rem;
+        }
+
+        button {
+            cursor: pointer;
+            border: 0;
+            border-radius: 6px;
+            background: #3730a3;
+            color: white;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #message {
+            min-height: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <main class="game">
+        <h1>Guess the Number</h1>
+        <p>Guess a number between 1 and 100.</p>
+
+        <form id="guessForm">
+            <label for="guessInput">Your guess:</label>
+            <input id="guessInput" type="number" min="1" max="100" required>
+            <button type="submit">Guess</button>
+        </form>
+
+        <p id="message" role="status" aria-live="polite"></p>
+        <p id="attempts">Attempts: 0</p>
+        <button id="restartButton" type="button">Start New Game</button>
+    </main>
+
+    <script>
+        const guessForm = document.getElementById("guessForm");
+        const guessInput = document.getElementById("guessInput");
+        const message = document.getElementById("message");
+        const attemptsText = document.getElementById("attempts");
+        const restartButton = document.getElementById("restartButton");
+
+        let targetNumber;
+        let attempts;
+
+        function startGame() {
+            targetNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            guessInput.value = "";
+            guessInput.disabled = false;
+            guessForm.querySelector("button").disabled = false;
+            message.textContent = "Make your first guess!";
+            attemptsText.textContent = "Attempts: 0";
+            guessInput.focus();
+        }
+
+        guessForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const guess = Number(guessInput.value);
+            if (!Number.isInteger(guess) || guess < 1 || guess > 100) {
+                message.textContent = "Enter a whole number from 1 to 100.";
+                guessInput.focus();
+                return;
+            }
+
+            attempts++;
+            attemptsText.textContent = "Attempts: " + attempts;
+
+            if (guess === targetNumber) {
+                message.textContent =
+                    "Correct! You guessed the number in " + attempts + " attempt(s).";
+                guessInput.disabled = true;
+                guessForm.querySelector("button").disabled = true;
+            } else if (guess < targetNumber) {
+                message.textContent = "Too low. Try a higher number.";
+            } else {
+                message.textContent = "Too high. Try a lower number.";
+            }
+
+            guessInput.select();
+        });
+
+        restartButton.addEventListener("click", startGame);
+        startGame();
+    </script>
+</body>
+</html>
