@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- //A 3X3 GRID WHEN A ITEMS POPS UP IN RANDOM CELL EVERY 800MS
+
+    CLICKING IT SCORES A POINTS, AND THE GAME LASTS 30 SECONDS 
+
+    PRACTICE : SETiNTERVAL AND CLEARINTERVAL , A FOR LOOP TO BUILD THE GRID CLASSlIST.toggle and event desegation on the grid -->
+
+    <h1>Whack-a-Mole Game</h1>
+    <p>Score points by clicking on the moles that pop up!</p>
+    <div id="grid" style="display: grid; grid-template-columns: repeat(3, 100px); grid-gap: 10px;">
+        <!-- Cells will be generated here -->   
+    </div>
+    <p>Score: <span id="score">0</span></p>
+    <script>
+        const grid = document.getElementById('grid');
+        let score = 0;
+        let moleInterval;
+        let gameDuration = 30000; // 30 seconds
+        let gameTimeout;
+
+        // Create a 3x3 grid
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.style.width = '100px';
+            cell.style.height = '100px';
+            cell.style.border = '1px solid black';
+            cell.style.display = 'flex';
+            cell.style.alignItems = 'center';
+            cell.style.justifyContent = 'center';
+            cell.dataset.index = i;
+            grid.appendChild(cell);
+        }
+
+        function startGame() {
+            moleInterval = setInterval(showMole, 800);
+            gameTimeout = setTimeout(endGame, gameDuration);
+        }
+
+        function showMole() {
+            const cells = grid.children;
+            const randomIndex = Math.floor(Math.random() * cells.length);
+            const moleCell = cells[randomIndex];
+            moleCell.textContent = '🐹'; // Mole emoji
+            moleCell.classList.add('mole');
+
+            setTimeout(() => {
+                moleCell.textContent = '';
+                moleCell.classList.remove('mole');
+            }, 800);
+        }
+
+        grid.addEventListener('click', (event) => {
+            if (event.target.classList.contains('mole')) {
+                score++;
+                document.getElementById('score').textContent = score;
+                event.target.textContent = '';
+                event.target.classList.remove('mole');
+            }
+        });
+
+        function endGame() {
+            clearInterval(moleInterval);
+            alert(`Game over! Your final score is: ${score}`);
+            score = 0;
+            document.getElementById('score').textContent = score;
+        }
+
+        startGame();
+    </script>
+
+</body>
+</html>
