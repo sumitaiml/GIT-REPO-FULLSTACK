@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #grid div {
+            cursor: pointer;
+            font-size: 2em;
+            text-align: center;
+        }
+        
+    </style>
+
+</head>
+<body>
+    <!-- A 4 x4 grid of face-down cards with 8 pairs flipped two at a time 
+    Matches stay open and mismatch flip back after 1 second
+
+    Practice :a rray shufffle,nested state with let,closure for the "first card" tracking and locking clickswhile cards flips back -->
+    <div id="grid" style="display: grid; grid-template-columns: repeat(4, 100px); grid-gap: 10px;">
+        <!-- Cards will be generated here -->
+    </div>
+    <script>
+        const grid = document.getElementById('grid');
+        const cardValues = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
+        let firstCard = null;
+        let lockBoard = false;
+
+        // Shuffle the card values
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const shuffledValues = shuffle(cardValues);
+
+        // Create a 4x4 grid of cards
+        for (let i = 0; i < shuffledValues.length; i++) {
+            const card = document.createElement('div');
+            card.style.width = '100px';
+            card.style.height = '100px';
+            card.style.border = '1px solid black';
+            card.style.display = 'flex';
+            card.style.alignItems = 'center';
+            card.style.justifyContent = 'center';
+            card.dataset.value = shuffledValues[i];
+            card.textContent = '?'; // Face-down
+            grid.appendChild(card);
+
+            card.addEventListener('click', () => {
+                if (lockBoard || card === firstCard || card.textContent !== '?') return;
+
+                card.textContent = card.dataset.value; // Flip the card
+
+                if (!firstCard) {
+                    firstCard = card;
+                    return;
+                }
+
+                // Check for a match
+                if (card.dataset.value === firstCard.dataset.value) {
+                    firstCard = null; // Match found, reset firstCard
+                } else {
+                    lockBoard = true;
+                    setTimeout(() => {
+                        card.textContent = '?'; // Flip back
+                        firstCard.textContent = '?'; // Flip back
+                        firstCard = null;
+                        lockBoard = false;
+                    }, 1000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
