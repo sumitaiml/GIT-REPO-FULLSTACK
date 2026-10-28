@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #reactionTime {
+            font-size: 2em;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- the screen turn green after random time between 1 and 5 seconds, and the user has to click the screen as fast as possible after it turns green. The reaction time is measured in milliseconds and displayed on the screen. The game can be played multiple times, and the best reaction time is recorded. -->
+    <div id="reactionTime">Reaction Time: 0 ms</div>
+    <script>
+        let startTime;
+        let bestTime = Infinity;
+
+        function startGame() {
+            const randomDelay = Math.floor(Math.random() * 4000) + 1000; // Random time between 1 and 5 seconds
+            document.body.style.backgroundColor = 'red';
+            setTimeout(() => {
+                document.body.style.backgroundColor = 'green';
+                startTime = Date.now();
+            }, randomDelay);
+        }
+
+        document.body.addEventListener('click', () => {
+            if (document.body.style.backgroundColor === 'green') {
+                const reactionTime = Date.now() - startTime;
+                document.getElementById('reactionTime').textContent = `Reaction Time: ${reactionTime} ms`;
+                if (reactionTime < bestTime) {
+                    bestTime = reactionTime;
+                    alert(`New Best Reaction Time: ${bestTime} ms`);
+                }
+                startGame(); // Start a new round
+            }
+        });
+
+        startGame(); // Start the first round
+    </script>
+</body>
+</html>
